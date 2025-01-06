@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback System</h1>
+        <div class="code-block">
+            <code>
+#include &lt;iostream&gt;
+#include &lt;queue&gt;
+#include &lt;string&gt;
+
+struct Feedback {
+    std::string username;
+    float rating;
+    std::string feedback;
+};
+
+// Example function to display feedbacks
+void displayFeedbacks(const std::queue&lt;Feedback&gt;&amp; feedbacks) {
+    auto temp = feedbacks;
+    while (!temp.empty()) {
+        auto feedback = temp.front();
+        std::cout &lt;&lt; "Username: " &lt;&lt; feedback.username
+                  &lt;&lt; ", Rating: " &lt;&lt; feedback.rating
+                  &lt;&lt; ", Feedback: " &lt;&lt; feedback.feedback &lt;&lt; '\n';
+        temp.pop();
+    }
+}
+            </code>
+        </div>
+    </div>
+</body>
+</html>

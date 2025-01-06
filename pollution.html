@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollution Node Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pollution Node Example</h1>
+        <div class="code-block">
+            <code>
+#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+
+struct PollutionNode {
+    float p_level;
+    std::string vehicle_type;
+    std::shared_ptr&lt;PollutionNode&gt; next;
+};
+
+// Example function to display pollution details
+void displayPollution(const std::shared_ptr&lt;PollutionNode&gt;&amp; head) {
+    auto current = head;
+    while (current) {
+        std::cout &lt;&lt; "Vehicle: " &lt;&lt; current-&gt;vehicle_type
+                  &lt;&lt; ", Pollution Level: " &lt;&lt; current-&gt;p_level &lt;&lt; '\n';
+        current = current-&gt;next;
+    }
+}
+            </code>
+        </div>
+    </div>
+</body>
+</html>

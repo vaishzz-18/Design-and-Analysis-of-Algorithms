@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sort Vehicles by Cost</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sort Vehicles by Cost</h1>
+        <div class="code-block">
+            <code>
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+struct Vehicle {
+    std::string type;
+    float cost;
+};
+
+// Example function to sort vehicles by cost
+void sortVehiclesByCost(std::vector&lt;Vehicle&gt;&amp; vehicles) {
+    std::sort(vehicles.begin(), vehicles.end(), [](const Vehicle&amp; a, const Vehicle&amp; b) {
+        return a.cost &lt; b.cost;
+    });
+
+    for (const auto&amp; vehicle : vehicles) {
+        std::cout &lt;&lt; "Vehicle: " &lt;&lt; vehicle.type &lt;&lt; ", Cost: " &lt;&lt; vehicle.cost &lt;&lt; '\n';
+    }
+}
+            </code>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation and Algorithm Design</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h2 {
+            background-color: #d0e8ff; /* Light blue background for headings */
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            color: black;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>What are the kinds of problems we see in transportation?</h2>
+    <p>Transportation systems encounter various challenges, such as inefficiencies in energy use, environmental degradation, and congestion. For example, fossil fuel dependency contributes to greenhouse gas emissions, while outdated infrastructure struggles to meet the needs of growing populations.</p>
+
+    <h2>Time Efficiency and Its Importance</h2>
+    <p>In today’s world, time efficiency is often the most crucial factor when solving problems. We focus on how quickly an algorithm can provide a solution, especially in scenarios where delays can have significant consequences, like real-time applications or competitive programming.</p>
+    <p>Time efficiencies can range from constant time (Ο(1)), where an algorithm’s execution doesn’t depend on input size, to logarithmic time (Ο(log n)), which is very efficient for large datasets (like binary search). Linear time (Ο(n)) algorithms are practical for many problems, as their performance grows proportionally with input size. Quadratic (Ο(n²)) or cubic (Ο(n³)) time algorithms, however, quickly become impractical as the input size increases.</p>
+
+    <h2>Designing Algorithms: What I Learned</h2>
+    <p>Through our studies, we explored various design techniques. Divide and conquer stood out as a powerful method. By breaking a problem into smaller subproblems, solving each independently, and combining the results, we can significantly improve efficiency. Merge sort is a perfect example of this approach.</p>
+    <p>Traversal methods like depth-first search (DFS) and breadth-first search (BFS) taught us how to navigate data structures like graphs and trees. DFS goes deep along one branch before backtracking, making it ideal for exploring all possibilities, such as finding paths in a maze. BFS explores layer by layer and is often better for finding the shortest path in unweighted graphs.</p>
+
+    <h2>Sorting Algorithms</h2>
+    <p>Sorting algorithms were one of the most detailed topics we explored. Each method has its strengths and weaknesses, and understanding these helped us connect them to real-world applications.</p>
+    <table>
+        <tr>
+            <th>Algorithm</th>
+            <th>Description</th>
+            <th>Use Case</th>
+        </tr>
+        <tr>
+            <td>Bubble Sort</td>
+            <td>Repeatedly swaps adjacent elements if they are in the wrong order.</td>
+            <td>Useful mainly for educational purposes or very small inputs.</td>
+        </tr>
+        <tr>
+            <td>Selection Sort</td>
+            <td>Finds the smallest element and places it at the start.</td>
+            <td>Simple but inefficient for large datasets.</td>
+        </tr>
+        <tr>
+            <td>Merge Sort</td>
+            <td>Uses divide and conquer to break the list into halves, sort each, and merge them.</td>
+            <td>Efficient for large datasets.</td>
+        </tr>
+        <tr>
+            <td>Heap Sort</td>
+            <td>Uses a binary heap to sort data, combining efficiency with in-place sorting.</td>
+            <td>Not stable, but efficient for in-place sorting.</td>
+        </tr>
+    </table>
+
+    <h2>What I Learned Overall</h2>
+    <p>Overall, I’ve learned that solving problems with algorithms involves making thoughtful trade-offs. We must balance simplicity with efficiency and adapt solutions to meet specific needs. Breaking problems into smaller parts, recognizing patterns, and learning from various contexts have helped me approach challenges effectively. This journey has taught us the importance of planning and adaptability in algorithm design.</p>
+
+</body>
+</html>

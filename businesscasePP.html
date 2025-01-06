@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Cases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .box {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .box h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .box p {
+            color: #555;
+            line-height: 1.6;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Business Cases</h1>
+    <div class="container">
+        <!-- Vehicle Cost Sorting Box -->
+        <div class="box">
+            <h2>Vehicle Cost Sorting</h2>
+            <p>
+                <strong>Description:</strong><br>
+                This system sorts vehicles based on parameters like cost, distance, or seating capacity using sorting algorithms:
+                <ul>
+                    <li><strong>Bubble Sort:</strong> Repeatedly swaps adjacent elements if they are in the wrong order.</li>
+                    <li><strong>Selection Sort:</strong> Finds the minimum element in the unsorted part and places it at the beginning.</li>
+                    <li><strong>Insertion Sort:</strong> Builds the sorted list one element at a time by inserting elements into the correct position.</li>
+                </ul>
+                These sorting algorithms help in optimizing vehicle management by arranging data in a way that supports better decision-making and resource allocation.
+            </p>
+            <a href="vehicle-cost-sort.html" class="button">Vehicle Cost Sorting Code</a> <!-- New Button Added -->
+        </div>
+
+        <!-- Resort Search Box -->
+        <div class="box">
+            <h2>Resort Search</h2>
+            <p>
+                <strong>Description:</strong><br>
+                The Resort Search system utilizes a <strong>Binary Search Tree (BST)</strong> to organize and search for resorts efficiently.
+                Resorts are stored based on their ratings, and users can locate resorts by providing a specific rating. Key features of this system include:
+                <ul>
+                    <li><strong>Efficient Search:</strong> Resorts can be quickly found using the tree structure, even in large datasets.</li>
+                    <li><strong>Rating Order:</strong> Results are displayed in rating order, ensuring logical organization.</li>
+                    <li><strong>User-Friendly:</strong> Simplifies search processes and enhances user experience.</li>
+                </ul>
+                This system reduces search complexity and ensures streamlined operations for better resource accessibility.
+            </p>
+            <a href="resort-search.html" class="button">View Binary Search Tree Code</a>
+        </div>
+    </div>
+</body>
+</html>

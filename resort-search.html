@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Resort by Rating</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Resort by Rating</h1>
+        <div class="code-block">
+            <code>
+#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+
+struct Resort {
+    std::string name;
+    float rating;
+    std::shared_ptr&lt;Resort&gt; left;
+    std::shared_ptr&lt;Resort&gt; right;
+};
+
+// Example function to search for a resort by rating
+std::shared_ptr&lt;Resort&gt; searchResortByRating(const std::shared_ptr&lt;Resort&gt;&amp; root, float rating) {
+    if (!root || root-&gt;rating == rating)
+        return root;
+    if (root-&gt;rating &gt; rating)
+        return searchResortByRating(root-&gt;left, rating);
+    else
+        return searchResortByRating(root-&gt;right, rating);
+}
+            </code>
+        </div>
+    </div>
+</body>
+</html>

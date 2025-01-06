@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Cases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .business-case {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background: #007bff;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Business Cases</h1>
+
+        <!-- Business Case 6: Path Optimization -->
+        <div class="business-case">
+            <h2>Path Optimization</h2>
+            <p>
+                The Path Optimization business case focuses on enhancing the efficiency of urban transportation systems. 
+                It involves analyzing various routes within the city to determine the most efficient paths for different types of vehicles.
+            </p>
+            <p><strong>Objective:</strong> To minimize travel time, fuel consumption, and overall traffic congestion in urban areas.</p>
+            <p><strong>Method:</strong> The Floyd-Warshall Algorithm is utilized to calculate the shortest paths between all pairs of nodes in a weighted graph. This allows for optimal routing decisions for various transportation scenarios, ensuring reduced travel times and enhanced traffic flow.</p>
+            <p><strong>Benefits:</strong> Improved commuter experience, reduced vehicle emissions due to efficient routing, and overall better traffic management in the city.</p>
+            <a href="path-optimization-code.html" class="button">View Path Optimization Code</a>
+        </div>
+
+        <!-- Business Case 8: Vehicle Pollution Search -->
+        <div class="business-case">
+            <h2>Vehicle Pollution Search</h2>
+            <p>
+                The Vehicle Pollution Search business case addresses the critical need to monitor and control vehicle emissions to ensure environmental standards are met.
+            </p>
+            <p><strong>Objective:</strong> To identify high-emission vehicles and enforce regulations that help reduce air pollution and protect public health.</p>
+            <p><strong>Method:</strong> The Rabin-Karp Algorithm is applied to efficiently search through large datasets of vehicle emission records. This algorithm is used to match patterns and detect vehicles that exceed permissible emission levels, enabling quick identification and corrective action.</p>
+            <p><strong>Benefits:</strong> Enhanced air quality, compliance with environmental standards, and a healthier urban living environment.</p>
+            <a href="pollution-search-code.html" class="button">View Pollution Search Code</a>
+        </div>
+        
+    </div>
+
+</body>
+</html>

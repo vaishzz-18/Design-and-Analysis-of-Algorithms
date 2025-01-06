@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Cases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .business-case {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background: #007bff;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Business Cases</h1>
+
+        <!-- Business Case 2: Pollution Monitoring -->
+        <div class="business-case">
+            <h2>Pollution Monitoring</h2>
+            <p>
+                This business case focuses on real-time monitoring of pollution levels using sensors and automated systems. 
+                The aim is to ensure timely detection and management of pollution in urban areas, thus protecting public health.
+            </p>
+            <p><strong>Union-Find Algorithm:</strong> Utilized to manage and efficiently group different pollution monitoring stations, enabling the identification of pollution clusters across the city.</p>
+            <p><strong>Implementation:</strong> Data from sensors is processed to detect and address pollution hotspots. The Union-Find algorithm helps in grouping areas with similar pollution levels for targeted interventions.</p>
+            <a href="pollution.html" class="button">View Pollution Monitoring Code</a>
+        </div>
+
+        <!-- Business Case 5: Feedback Collection and Display -->
+        <div class="business-case">
+            <h2>Feedback Collection and Display</h2>
+            <p>
+                This business case involves collecting feedback from citizens about city services and displaying this feedback to the relevant authorities. 
+                It aims to enhance service delivery and citizen satisfaction by addressing issues based on public input.
+            </p>
+            <p><strong>Disjoint Set Union (DSU):</strong> Used to efficiently manage and display feedback data by grouping similar feedback points, which helps in identifying common issues raised by citizens.</p>
+            <p><strong>Implementation:</strong> Feedback is collected through surveys and online platforms, grouped using DSU for efficient display, and analyzed to improve city services.</p>
+            <a href="feedback.html" class="button">View Feedback Collection Code</a>
+        </div>
+        
+    </div>
+
+</body>
+</html>

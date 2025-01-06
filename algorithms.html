@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithms and Data Structures Overview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+        .section p {
+            margin: 5px 0;
+            text-align: justify;
+        }
+        .section span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Algorithms and Data Structures Overview</h1>
+        <p>Detailed explanation of algorithms and data structures used in the project.</p>
+    </div>
+    <div class="container">
+        <!-- Algorithm Sections -->
+        <div class="section">
+            <h3>1. Arrays</h3>
+            <p><span>Functions:</span> write_into_file, read_from_file, bubble_sort_distance, selection_sort_fare, insertion_sort_seats, display_sorted_list.</p>
+            <p><span>Purpose:</span> Arrays are used to store details about routes, vehicles, costs, and other data in an indexed format for easy access and sorting.</p>
+        </div>
+        <div class="section">
+            <h3>2. Structures</h3>
+            <p><span>Functions:</span> Structs like <code>CP</code>, <code>NODE</code>, <code>Resort</code>, and <code>PAYMENT</code> define custom data types for various components (routes, pollution levels, resorts, payments).</p>
+            <p><span>Purpose:</span> Structures provide a way to group related data for operations like route management, pollution tracking, etc.</p>
+        </div>
+        <div class="section">
+            <h3>3. Linked List</h3>
+            <p><span>Functions:</span> create_node, insert_end, display_list, search_vehicle_pollution.</p>
+            <p><span>Purpose:</span> Used to store pollution levels and associated vehicle types dynamically.</p>
+        </div>
+        <div class="section">
+            <h3>4. Stack</h3>
+            <p><span>Functions:</span> push, pop_cost_of_vehicle, display_stack, quick_sort.</p>
+            <p><span>Purpose:</span> Implements payment management by storing payment modes and costs for vehicles.</p>
+        </div>
+        <div class="section">
+            <h3>5. Queue</h3>
+            <p><span>Functions:</span> initialize_queue, enqueue, display_queue.</p>
+            <p><span>Purpose:</span> Handles feedback collection and displays user inputs sequentially.</p>
+        </div>
+        <div class="section">
+            <h3>6. Binary Search Tree</h3>
+            <p><span>Functions:</span> insert_resort, search_resort_by_rating, inorder_traversal.</p>
+            <p><span>Purpose:</span> Stores resorts and allows searching based on ratings using in-order traversal.</p>
+        </div>
+        <div class="section">
+            <h3>7. Fenwick Tree</h3>
+            <p><span>Functions:</span> update, query.</p>
+            <p><span>Purpose:</span> Used for managing installment payments efficiently with range queries.</p>
+        </div>
+        <div class="section">
+            <h3>8. Graph Algorithms (DFS, BFS, Dijkstra, Prim, Kruskal)</h3>
+            <p><span>Functions:</span> DFS, bfs, dijkstra, prim_mst, kruskals.</p>
+            <p><span>Purpose:</span> Perform graph traversals and find shortest paths or minimum spanning trees in the city map.</p>
+        </div>
+        <div class="section">
+            <h3>9. Sorting Algorithms (Bubble Sort, Selection Sort, Insertion Sort, Heap Sort, Quick Sort)</h3>
+            <p><span>Functions:</span> bubble_sort_distance, selection_sort_fare, insertion_sort_seats, heap_sort, quick_sort.</p>
+            <p><span>Purpose:</span> Sort routes or vehicles based on cost, distance, or number of seats.</p>
+        </div>
+        <div class="section">
+            <h3>10. Floyd-Warshall Algorithm</h3>
+            <p><span>Functions:</span> floyd_warshall.</p>
+            <p><span>Purpose:</span> Finds shortest paths between all pairs of vertices in the graph.</p>
+        </div>
+        <div class="section">
+            <h3>11. Rabin-Karp String Matching</h3>
+            <p><span>Functions:</span> rabin_karp.</p>
+            <p><span>Purpose:</span> Searches for specific strings (e.g., pollution-related data).</p>
+        </div>
+        <div class="section">
+            <h3>12. Lookup Table</h3>
+            <p><span>Functions:</span> look_up_table, data_look_up.</p>
+            <p><span>Purpose:</span> Precomputes time/distance between city locations for quick retrieval.</p>
+        </div>
+    </div>
+</body>
+</html>

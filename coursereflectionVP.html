@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Design Notes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .question {
+            background-color: #d0e8ff; /* Light blue background */
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .content {
+            margin: 15px 0;
+            padding: 10px 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            margin: 0;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Algorithm Design Notes</h1>
+
+    <div class="question">
+        <h2>1. Problems in Nature: Iteration, Recursion, and Backtracking</h2>
+    </div>
+    <div class="content">
+        <p><strong>Iteration:</strong> Iteration is seen in nature through repetitive cycles that continue over time. Examples include cell division, seasonal migration patterns, and the water cycle.</p>
+        <p><strong>Recursion:</strong> Recursion appears in self-similar structures like trees, DNA replication, and the Fibonacci sequence in plants.</p>
+        <p><strong>Backtracking:</strong> Backtracking is observed in problem-solving processes like animals foraging for food, the immune system, and climbing plants adjusting direction.</p>
+    </div>
+
+    <div class="question">
+        <h2>2. Space and Time Efficiency: Significance and Growth Orders</h2>
+    </div>
+    <div class="content">
+        <p><strong>Definition and Importance:</strong> Time efficiency measures runtime, while space efficiency focuses on memory usage. Common growth rates include:</p>
+        <ul>
+            <li>O(1): Constant time</li>
+            <li>O(log n): Logarithmic growth</li>
+            <li>O(n): Linear growth</li>
+            <li>O(n log n): Linearithmic growth</li>
+            <li>O(n²): Quadratic growth</li>
+            <li>O(2^n): Exponential growth</li>
+            <li>O(n!): Factorial growth</li>
+        </ul>
+    </div>
+
+    <div class="question">
+        <h2>3. Design Principles: Chapter 2 Takeaways</h2>
+    </div>
+    <div class="content">
+        <ul>
+            <li><strong>Decomposition:</strong> Breaking problems into smaller tasks.</li>
+            <li><strong>Pattern Recognition:</strong> Identifying repeated structures.</li>
+            <li><strong>Abstraction:</strong> Focusing on essential features.</li>
+            <li><strong>Cautious and Bold Travel:</strong> BFS vs. DFS traversal strategies.</li>
+            <li><strong>Pruning:</strong> Cutting off computations leading to dead ends.</li>
+            <li><strong>Memoization:</strong> Storing intermediate results.</li>
+            <li><strong>Lazy Propagation:</strong> Delaying updates in data structures.</li>
+        </ul>
+    </div>
+
+    <div class="question">
+        <h2>4. Trees and Optimization Techniques</h2>
+    </div>
+    <div class="content">
+        <ul>
+            <li><strong>Binary Trees:</strong> Nodes with at most two children.</li>
+            <li><strong>Binary Search Trees:</strong> Efficient for searching but can become unbalanced.</li>
+            <li><strong>AVL Trees:</strong> Self-balancing binary trees.</li>
+            <li><strong>Red-Black Trees:</strong> Balanced trees using color-coding.</li>
+            <li><strong>Tries:</strong> Specialized for string operations.</li>
+            <li><strong>Heaps:</strong> Priority queues with efficient insertions and deletions.</li>
+        </ul>
+    </div>
+
+    <div class="question">
+        <h2>5. Array Query Algorithms</h2>
+    </div>
+    <div class="content">
+        <ul>
+            <li><strong>Lookup Table:</strong> Fast lookups with O(1) time complexity.</li>
+            <li><strong>Segment Trees:</strong> Efficient for range queries and updates.</li>
+            <li><strong>Sparse Table:</strong> Preprocessed for static range queries.</li>
+            <li><strong>Fenwick Trees:</strong> Efficient for prefix sums and range queries.</li>
+        </ul>
+    </div>
+
+    <div class="question">
+        <h2>6. Trees vs. Graphs: Key Differences and Applications</h2>
+    </div>
+    <div class="content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Tree</th>
+                    <th>Graph</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Structure</td>
+                    <td>Hierarchical, no cycles</td>
+                    <td>Can be cyclic or acyclic</td>
+                </tr>
+                <tr>
+                    <td>Connections</td>
+                    <td>Each node has one parent (except root)</td>
+                    <td>Nodes can have multiple connections (directed or undirected)</td>
+                </tr>
+                <tr>
+                    <td>Root Node</td>
+                    <td>Single root</td>
+                    <td>No single root; any node can be the starting point</td>
+                </tr>
+                <tr>
+                    <td>Traversal</td>
+                    <td>Preorder, Inorder, Postorder, Level-order</td>
+                    <td>DFS, BFS, Topological sort</td>
+                </tr>
+                <tr>
+                    <td>Applications</td>
+                    <td>File systems, organizational charts</td>
+                    <td>Social networks, routing, circuit design</td>
+                </tr>
+                <tr>
+                    <td>Memory Complexity</td>
+                    <td>O(n)</td>
+                    <td>O(n + m)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="question">
+        <h2>7. Sorting and Searching Algorithms</h2>
+    </div>
+    <div class="content">
+        <p><strong>Sorting Algorithms:</strong></p>
+        <ul>
+            <li>Bubble Sort: Simple but inefficient with O(n²) complexity.</li>
+            <li>Quick Sort: Efficient with O(n log n) average complexity.</li>
+            <li>Heap Sort: O(n log n) complexity but slower than Quick Sort.</li>
+        </ul>
+        <p><strong>Searching Algorithms:</strong></p>
+        <ul>
+            <li>Linear Search: O(n) complexity, checks every element.</li>
+            <li>Binary Search: O(log n) complexity for sorted arrays.</li>
+            <li>Hashing: O(1) average lookup time with hash functions.</li>
+        </ul>
+    </div>
+
+    <div class="question">
+        <h2>8. Graph Algorithms: Spanning Trees and Shortest Paths</h2>
+    </div>
+    <div class="content">
+        <p><strong>Spanning Trees:</strong></p>
+        <ul>
+            <li>Prim’s Algorithm: Builds MST by adding the smallest edge connecting a tree vertex to another vertex.</li>
+            <li>Kruskal’s Algorithm: Adds sorted edges to form MST while avoiding cycles.</li>
+        </ul>
+        <p><strong>Shortest Path Algorithms:</strong></p>
+        <ul>
+            <li>Dijkstra’s Algorithm: Efficient for graphs with non-negative weights.</li>
+            <li>Bellman-Ford Algorithm: Handles negative edge weights and detects negative weight cycles.</li>
+            <li>Floyd-Warshall Algorithm: Computes all-pairs shortest paths with O(V³) complexity.</li>
+        </ul>
+    </div>
+
+    <div class="question">
+        <h2>9. Algorithm Design Techniques</h2>
+    </div>
+    <div class="content">
+        <ul>
+            <li>Divide and Conquer: Break problems into smaller sub-problems (e.g., Merge Sort).</li>
+            <li>Dynamic Programming: Store solutions to avoid redundant work (e.g., Fibonacci series).</li>
+            <li>Greedy: Make locally optimal choices (e.g., Huffman coding).</li>
+            <li>Backtracking: Explore all possibilities and backtrack when a solution is invalid (e.g., N-Queens problem).</li>
+            <li>Branch and Bound: Prune ineffective paths early (e.g., Traveling Salesman problem).</li>
+            <li>Randomized Algorithms: Introduce randomness for efficiency (e.g., Quick Sort with random pivot).</li>
+        </ul>
+    </div>
+</body>
+</html>

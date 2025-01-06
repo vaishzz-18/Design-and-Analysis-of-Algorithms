@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floyd-Warshall Algorithm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Path Optimization Code:</h1>
+        <div class="code-block">
+            <code>
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;limits&gt;
+
+const int INF = std::numeric_limits&lt;int&gt;::max();
+const int V = 5;
+
+// Example function implementing Floyd-Warshall algorithm
+void floydWarshall(int graph[V][V]) {
+    int dist[V][V];
+
+    for (int i = 0; i &lt; V; i++)
+        for (int j = 0; j &lt; V; j++)
+            dist[i][j] = graph[i][j];
+
+    for (int k = 0; k &lt; V; k++) {
+        for (int i = 0; i &lt; V; i++) {
+            for (int j = 0; j &lt; V; j++) {
+                if (dist[i][k] != INF &amp;&amp; dist[k][j] != INF &amp;&amp; dist[i][k] + dist[k][j] &lt; dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    }
+
+    for (int i = 0; i &lt; V; i++) {
+        for (int j = 0; j &lt; V; j++) {
+            if (dist[i][j] == INF)
+                std::cout &lt;&lt; "INF ";
+            else
+                std::cout &lt;&lt; dist[i][j] &lt;&lt; " ";
+        }
+        std::cout &lt;&lt; '\n';
+    }
+}
+            </code>
+        </div>
+    </div>
+</body>
+</html>
