@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Resort by Rating</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Code Overview</h1>
+        <div class="code-block">
+            <code>
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+#include &lt;limits.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;time.h&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;memory&gt;
+
+#define M_SIZE 10
+#define V 10
+#define d 256
+
+/** Structure for routes and vehicles list (array implementation) **/
+struct CP 
+{
+    int distance;
+    int seats;
+    int fare;
+    int start;
+    int end;
+    char type[100];
+};
+
+/** Structure for finding pollution of a particular vehicle (list implementation) **/
+struct NODE 
+{
+    float p_level;
+    char tov[15];
+    std::shared_ptr&lt;NODE&gt; next;
+};
+
+/** Structure for finding resorts nearby once the user reaches desired destination (binary search tree implementation) **/
+struct Resort 
+{
+    char name[50];
+    char location[50];
+    float rating;
+    std::shared_ptr&lt;Resort&gt; left;
+    std::shared_ptr&lt;Resort&gt; right;
+};
+
+/** Structure for payment after the end of journey (stack implementation) **/
+struct PAYMENT 
+{
+    char tov[20][20];
+    float cost[20];
+    char mode_of_payment[20][20];
+    int top;
+};
+
+/** Structure for minimum spanning tree (Kruskal's implementation) **/
+struct edge 
+{
+    int src;
+    int dest;
+    int weight;
+};
+
+/** Structure for printing the feedback to the user at the start of the program (simple array implementation) **/
+struct Feedback 
+{
+    char username[20];
+    float ratings;
+    char feedback[20];
+    char timestamp[20];
+};
+
+/** Structure for entering the feedback by the user (queue implementation) **/
+struct myqueue 
+{
+    char name[20][20];
+    float rating[20];
+    char message[20][20];
+    int front;
+    int rear;
+};
+
+/** Globally declared variables **/
+int global_count = 0;
+CP details[100];
+CP result_list[50];
+CP final_list[20];
+CP choice_list[10];
+
+int visited[10];
+int fenwick_tree[30];
+
+/** Function Name: write_into_file
+Input Params: NILL
+Return Type: void
+Description: writes all the data available with details into appropriate data structure **/
+void write_into_file() 
+{
+    FILE *fp;
+    fp = fopen("commute.txt", "w");
+
+    if (fp == NULL) 
+    {
+        std::cout &lt;&lt; "File open error";
+        return;
+    }
+
+    for (int i = 0; i &lt; 97; i++) 
+    {
+        int res = scanf("%d%d%d%d%d%[^\n]", &details[i].distance, &details[i].seats, &details[i].fare, &details[i].start, &details[i].end, details[i].type);
+
+        if (res != 6) 
+        {
+            std::cout &lt;&lt; "Error in input format. Loop terminated.\n";
+            break;
+        }
+
+        fprintf(fp, "%d %d %d %d %d %s\n", details[i].distance, details[i].seats, details[i].fare, details[i].start, details[i].end, details[i].type);
+    }
+    fclose(fp);
+}
+
+/** Function Name: load_from_file
+Input Params: NILL
+Return Type: void
+Description: loads all the data available with details into appropriate data structure **/
+void read_from_file() 
+{
+    FILE *fp;
+
+    fp = fopen("commute.txt", "r");
+
+    if (fp == NULL) 
+    {
+        std::cout &lt;&lt; "File Not found\n";
+        return;
+    }
+
+    char line[200];
+    std::cout &lt;&lt; "DISTANCE SEATS  FARE STARTPOINT ENDPOINT TYPE OF TRANSPORT\n";
+    while (global_count &lt; 100 && fgets(line, sizeof(line), fp) != NULL) 
+    {
+        int res = sscanf(line, "%d %d %d %d %d %[^\n]", &details[global_count].distance, &details[global_count].seats, &details[global_count].fare, &details[global_count].start, &details[global_count].end, details[global_count].type);
+        if (res == 6) 
+        {
+            std::cout &lt;&lt; details[global_count].distance &lt;&lt; "\t" &lt;&lt; details[global_count].seats &lt;&lt; "\t" &lt;&lt; details[global_count].fare &lt;&lt; "\t" &lt;&lt; details[global_count].start &lt;&lt; "\t" &lt;&lt; details[global_count].end &lt;&lt; "\t" &lt;&lt; details[global_count].type &lt;&lt; "\n";
+            global_count++;
+        }
+    }
+
+    fclose(fp);
+}
+
+/** Function name: floyd_warshall
+Input Params: matrix from main
+Return type: void
+Description: prints all pair shortest path from each vertex **/
+void print_solution(int dist[10][10]);
+void floyd_warshall(int dist[10][10]) 
+{
+    for (int k = 0; k &lt; 10 ; k++) 
+    {
+        for (int i = 0; i &lt; 10; i++) 
+        {
+            for (int j = 0; j &lt; 10; j++) 
+            {
+                if (dist[i][k] + dist[k][j] &lt; dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    }
+    print_solution(dist);
+}
+
+/** Function name: print_solution
+Input Params: matrix from main
+Return type: void
+Description: prints all pair shortest path from each vertex **/
+void print_solution(int dist[10][10]) 
+{
+    std::cout &lt;&lt; "\nThe following matrix shows the shortest distances between every pair of vertices (places here)\n";
+    std::cout &lt;&lt; "*****************************\n";
+    for (int i = 0; i &lt; 10; i++) 
+    {
+        for (int j = 0; j &lt; 10; j++) 
+        {
+            if (i == j)
+                std::cout &lt;&lt; " 0";
+            else
+                std::cout &lt;&lt; std::setw(3) &lt;&lt; dist[i][j];
+        }
+        std::cout &lt;&lt; "\n";
+    }
+    std::cout &lt;&lt; "*****************************\n";
+}
+
+/** Function name: search_from_file
+Input Params: start point of the journey
+Return type: void
+Description: prints all pair of vertices with the details having their starting point as s **/
+void search_from_file(int s) 
+{
+    FILE *fp;
+
+    fp = fopen("commute.txt", "r");
+
+    if (fp == NULL) 
+    {
+        std::cout &lt;&lt; "File Not found\n";
+        return;
+    }
+
+    char line[100];
+
+    std::cout &lt;&lt; "The following shows the\n";
+    std::cout &lt;&lt; "DISTANCE SEATS  FARE STARTPOINT ENDPOINT TYPE OF TRANSPORT\n";
+    std::cout &lt;&lt; "all starting from " &lt;&lt; s &lt;&lt; "\n";
+
+    while (global_count &lt; 100 && fgets(line, sizeof(line), fp) != NULL) 
+    {
+        int res = sscanf(line, "%d %d %d %d %d %[^\n]", &details[global_count].distance, &details[global_count].seats, & 
+details[global_count].fare, &details[global_count].start, &details[global_count].end, details[global_count].type);
+        if (res == 6) 
+        {
+            if (details[global_count].start == s) 
+            {
+                std::cout &lt;&lt; details[global_count].distance &lt;&lt; "\t" &lt;&lt; details[global_count].seats &lt;&lt; "\t" &lt;&lt; details[global_count].fare &lt;&lt; "\t" &lt;&lt; details[global_count].start &lt;&lt; "\t" &lt;&lt; details[global_count].end &lt;&lt; "\t" &lt;&lt; details[global_count].type &lt;&lt; "\n";
+                result_list[global_count] = details[global_count];
+                global_count++;
+            }
+        }
+    }
+
+    fclose(fp);
+}
+
+/** Function name: get_distance_associated
+Input Params: start point of the journey, end point of the journey
+Return type: int
+Description: Returns the shortest distance of those vertices whose start point=s and end point=e **/
+int get_distance_associated(int s, int e) 
+{
+    for (int i = 0; i &lt; 8; i++) 
+    {
+        if (result_list[i].start == s && result_list[i].end == e) 
+        {
+            return result_list[i].distance;
+        }
+    }
+    return -1; // Return -1 if not found
+}
+
+/** Function name: all_distances
+Input Params: start point of the journey, end point of the journey, distance associated with it
+Return type: int
+Description: Returns the number of entities present in final_list **/
+int all_distances(int s, int e, int k) 
+{
+    int count = 0;
+    int l = 0;
+    std::cout &lt;&lt; "\n\n";
+    std::cout &lt;&lt; "The following shows the vertices all starting from " &lt;&lt; s &lt;&lt; "\n and having distance greater than or equal to " &lt;&lt; k &lt;&lt; "\n";
+    std::cout &lt;&lt; "DISTANCE SEATS  FARE STARTPOINT END POINT TYPE OF TRANSPORT\n";
+
+    for (int i = 0; i &lt; 10; i++) 
+    {
+        if (result_list[i].start == s && result_list[i].distance &gt;= k) 
+        {
+            count++;
+            std::cout &lt;&lt; result_list[i].distance &lt;&lt; "\t" &lt;&lt; result_list[i].seats &lt;&lt; "\t" &lt;&lt; result_list[i].fare &lt;&lt; "\t" &lt;&lt; result_list[i].start &lt;&lt; "\t" &lt;&lt; result_list[i].end &lt;&lt; "\t" &lt;&lt; result_list[i].type &lt;&lt; "\n";
+            final_list[l++] = result_list[i];
+        }
+    }
+
+    return count;
+}
+
+/** Function name: search_vehicle_list
+Input Params: number of elements in final_list, vehicle user has opted for
+Return type: void
+Description: Returns the number of entities present in final_list **/
+void search_vehicle(int p, const char* name) 
+{
+    int found = 0;
+    int count = 0;
+    int a[5];
+    std::cout &lt;&lt; "The following is/are the options to opt for\n";
+    for (int i = 0; i &lt; p; i++) 
+    {
+        if (strstr(final_list[i].type, name) != NULL) 
+        {
+            found = 1;
+            a[count] = i;
+            std::cout &lt;&lt; final_list[a[count]].distance &lt;&lt; "\t" &lt;&lt; final_list[a[count]].seats &lt;&lt; "\t" &lt;&lt; final_list[a[count]].fare &lt;&lt; "\t" &lt;&lt; final_list[a[count]].start &lt;&lt; "\t" &lt;&lt; final_list[a[count]].end &lt;&lt; "\t" &lt;&lt; final_list[a[count]].type &lt;&lt; "\n";
+            count++;
+        }
+    }
+    if (count == 1) 
+    {
+        std::cout &lt;&lt; "Thus distance to travel in kms in order to reach your desired destination and the vehicle chosen\n";
+        
+        std::cout &lt;&lt; "distance: " &lt;&lt; final_list[a[0]].distance &lt;&lt; "\topting for: " &lt;&lt; final_list[a[0]].type &lt;&lt; "\n";
+    } else if (count &gt; 1) 
+    {
+        std::cout &lt;&lt; "The user always chooses the first option i.e the following\n";
+        std::cout &lt;&lt; final_list[a[0]].distance &lt;&lt; "\t" &lt;&lt; final_list[a[0]].seats &lt;&lt; "\t" &lt;&lt; final_list[a[0]].fare &lt;&lt; "\t" &lt;&lt; final_list[a[0]].start &lt;&lt; "\t" &lt;&lt; final_list[a[0]].end &lt;&lt; "\t" &lt;&lt; final_list[a[0]].type &lt;&lt; "\n";
+        std::cout &lt;&lt; "Thus distance to travel in kms in order to reach your desired destination and the vehicle chosen\n";
+        std::cout &lt;&lt; "distance: " &lt;&lt; final_list[a[0]].distance &lt;&lt; "\topting for: " &lt;&lt; final_list[a[0]].type &lt;&lt; "\n";
+    }
+}
+
+/** Function name: bubble_sort_distance
+Input Params: no of items in the final list presented to the user
+Return type: void
+Description: sorts the final_list based on amount (fare) to be given by the user **/
+void bubble_sort_distance(int p) 
+{
+    for (int i = 0; i &lt; p - 1; i++) 
+    {
+        for (int j = 0; j &lt; p - i - 1; j++) 
+        {
+            if (final_list[j + 1].distance &lt; final_list[j].distance) 
+            {
+                std::swap(final_list[j], final_list[j + 1]);
+            }
+        }
+    }
+}
+
+/** Function name: selection_sort_fare
+Input Params: no of items in the final list presented to the user
+Return type: void
+Description: sorts the final_list based on fare **/
+void selection_sort_fare(int p) 
+{
+    for (int i = 0; i &lt; p - 1; i++) 
+    {
+        int min = i;
+        for (int j = i + 1; j &lt; p; j++) 
+        {
+            if (final_list[j].fare &lt; final_list[min].fare) 
+            {
+                min = j;
+            }
+        }
+        std::swap(final_list[min], final_list[i]);
+    }
+}
+
+/** Function name: insertion_sort_seats
+Input Params: no of items in the final list presented to the user
+Return type: void
+Description: sorts the final_list based on number of seats available **/
+void insertion_sort_seats(int p) 
+{
+    for (int i = 1; i &lt; p; i++) 
+    {
+        CP key = final_list[i];
+        int j = i - 1;
+
+        while (j &gt;= 0 && final_list[j].seats &gt; key.seats) 
+        {
+            final_list[j + 1] = final_list[j];
+            j = j - 1;
+        }
+        final_list[j + 1] = key;
+    }
+}
+
+/** Function name: display_sorted_list
+Input Params: void
+Return type: void
+Description: displays the final_list once it is sorted as required **/
+void display_sorted_list() 
+{
+    std::cout &lt;&lt; "\n\n";
+    std::cout &lt;&lt; "DISTANCE SEATS  FARE STARTPOINT END POINT TYPE OF TRANSPORT\n";
+
+    for (int i = 0; i &lt; 8; i++) 
+    {
+        if (final_list[i].distance != 0) 
+        {
+            std::cout &lt;&lt; final_list[i].distance &lt;&lt; "\t" &lt;&lt; final_list[i].seats &lt;&lt; "\t" &lt;&lt; final_list[i].fare &lt;&lt; "\t"
+ &lt;&lt; final_list[i].start &lt;&lt; "\t" &lt;&lt; final_list[i].end &lt;&lt; "\t" &lt;&lt; final_list[i].type &lt;&lt; "\n";
+        }
+    }
+}
+
+/** Function name: create_node
+Input Params: void
+ 
+    return NODE*;
+}
+
+/** Function name: read_details
+Input Params: NODE*
+Return type: NODE*
+Description: reads the details of vehicle and the pollution level **/
+NODE* read_details(NODE* t) 
+{
+    std::cin >> t->tov >> t->p_level;
+    return t;
+}
+
+/** Function name: insert_end
+Input Params: head, node to be inserted
+Return type: NODE*
+Description: inserts the node one by one serially **/
+NODE* insert_end(NODE* head, NODE* t) 
+{
+    if (head == nullptr) 
+    {
+        head = t;
+    } else 
+    {
+        NODE* ptr = head;
+        while (ptr->next != nullptr) 
+        {
+            ptr = ptr->next.get();
+        }
+        ptr->next = std::shared_ptr<NODE>(t);
+    }
+    return head;
+}
+
+/** Function name: display_list
+Input Params: head
+Return type: void
+Description: displays all the vehicles and their associated pollution level **/
+void display_list(NODE* head) 
+{
+    if (head == nullptr) 
+    {
+        std::cout << "Empty list\n";
+    } else 
+    {
+        std::cout << std::setw(15) << "Vehicle" << std::setw(10) << "Pollution Level\n";
+        std::cout << "-------------------------\n";
+
+        NODE* cur = head;
+        while (cur != nullptr) 
+        {
+            std::cout << std::setw(15) << cur->tov << std::setw(10) << cur->p_level << "\n";
+            cur = cur->next.get();
+        }
+    }
+}
+
+/** Function name: search_vehicle_pollution
+Input Params: head of the list and the vehicle type whose pollution you wish to search
+Return type: void
+Description: gives the pollution level of searched vehicle **/
+void search_vehicle_pollution(NODE* head, const char* vehicletype) 
+{
+    NODE* cur = head;
+
+    while (cur != nullptr) 
+    {
+        if (strcmp(cur->tov, vehicletype) == 0) 
+        {
+            std::cout << "Vehicle: " << cur->tov << ", Pollution Level: " << cur->p_level << "\n";
+        }
+        cur = cur->next.get();
+    }
+}
+
+/** Function name: is_empty
+Input Params: PAYMENT*
+Return type: int
+Description: function to check if the stack is empty or not **/
+int is_empty(PAYMENT* stack) 
+{
+    return stack->top == -1;
+}
+
+/** Function name: is_full
+Input Params: PAYMENT*
+Return type: int
+Description: function to check if the stack is full or not **/
+int is_full(PAYMENT* stack) 
+{
+    return stack->top == M_SIZE - 1;
+}
+
+/** Function name: push
+Input Params: stack, and the elements to be pushed into the stack
+Return type: void
+Description: pushes the elements into the stack **/
+void push(PAYMENT* stack, const char vehicle[20], float cost, const char mode_of_transaction[20]) 
+{
+    if (is_full(stack)) 
+    {
+        std::cout << "Stack overflow.\n";
+        return;
+    }
+
+    stack->top++;
+    strcpy(stack->tov[stack->top], vehicle);
+    stack->cost[stack->top] = cost;
+    strcpy(stack->mode_of_payment[stack->top], mode_of_transaction);
+}
+
+/** Function name: pop_cost_of_vehicle
+Input Params: stack, vehicle name
+Return type: float
+Description: gives out the cost of the vehicle the user has opted for **/
+float pop_cost_of_vehicle(PAYMENT* stack, const char* vehicle) 
+{
+    if (is_empty(stack)) 
+    {
+        std::cout << "Stack underflow.\n";
+        return 0.0f;
+    }
+
+    for (int i = stack->top; i >= 0; i--) 
+    {
+        if (strcmp(stack->tov[i], vehicle) == 0) 
+        {
+            float cost = stack->cost[i];
+            std::cout << "options available is/are " << stack->mode_of_payment[i] << "\n";
+
+            for (int j = i; j < stack->top; j++) 
+            {
+                stack->cost[j] = stack->cost[j + 1];
+            }
+
+            stack->top--;
+            return cost;
+        }
+    }
+    return 0.0f; // Return 0 if vehicle not found
+}
+
+/** Function name: display_stack
+Input Params: stack
+Return type: float*
+Description: copies the cost/km of vehicle type into a vehicle to sort the cost and present it to 
+the user **/
+float* display_stack(PAYMENT stack) 
+{
+    std::cout << std::setw(20) << "Vehicle" << std::setw(10) << "Cost" << std::setw(20) << "Mode of Payment\n";
+    std::cout << "-----------------------------------------------------\n";
+
+    float* cost_array = (float*)malloc((stack.top + 1) * sizeof(float));
+    if (cost_array == nullptr) 
+    {
+        std::cout << "Memory allocation failed.\n";
+        return nullptr;
+    }
+    for (int i = stack.top; i >= 0; i--) 
+    {
+        cost_array[i] = stack.cost[i];
+        std::cout << std::setw(20) << stack.tov[i] << std::setw(10) << stack.cost[i] << std::setw(20) << stack.mode_of_payment[i] << "\n";
+    }
+    return cost_array;
+}
+
+/** Function name: heapify
+Input Params: n, a, i
+Return type: void
+Description: function to heapify the cost array **/
+void heapify(int n, float a[], int i) 
+{
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && a[left] > a[largest]) 
+    {
+        largest = left;
+    }
+
+    if (right < n && a[right] > a[largest]) 
+    {
+        largest = right;
+    }
+
+    if (largest != i) 
+    {
+        std::swap(a[i], a[largest]);
+        heapify(n, a, largest);
+    }
+}
+
+/** Function name: max_heap
+Input Params: n, a
+Return type: void
+Description: function to build the heap **/
+void max_heap(int n, float a[]) 
+{
+    for (int i = (n / 2) - 1; i >= 0; i--) 
+    {
+        heapify(n, a, i);
+    }
+}
+
+/** Function name: heap_sort
+Input Params: n, a
+Return type: void
+Description: gives a sorted cost array to the user **/
+void heap_sort(int n, float a[]) 
+{
+    max_heap(n, a);
+    for (int i = n - 1; i > 0; i--) 
+    {
+        std::swap(a[0], a[i]);
+        heapify(i, a, 0);
+    }
+}
+
+/** Function name: display_array
+Input Params: cost array
+Return type: void
+Description: displays a sorted cost array to the user **/
+void display_array(float a[8]) 
+{
+    std::cout << "The sorted order of cost (rs/km) is\n";
+    for (int i = 0; i < 8; i++) 
+    {
+        std::cout << a[i] << "  ";
+    }
+}
+
+/** Function name: swap_quick
+Input Params: stack, i, j
+Return type: void
+Description: function to swap the elements of stack **/
+void swap_quick(PAYMENT* stack, int i, int j) 
+{
+    char temp_vehicle[20];
+    float temp_cost;
+    char temp_mode[20];
+
+    strcpy(temp_vehicle, stack->tov[i]);
+    temp_cost = stack->cost[i];
+    strcpy(temp_mode, stack->mode_of_payment[i]);
+
+    strcpy(stack->tov[i], stack->tov[j]);
+    stack->cost[i] = stack->cost[j];
+    strcpy(stack->mode_of_payment[i], stack->mode_of_payment[j]);
+
+    strcpy(stack->tov[j], temp_vehicle);
+    stack->cost[j] = temp_cost;
+    strcpy(stack->mode_of_payment[j], temp_mode);
+}
+
+/** Function name: partition
+Input Params: stack, l, h
+Return type: int
+Description: function to partition the stack **/
+int partition(PAYMENT* stack, int l, int h) 
+{
+    float pivot = stack->cost[h];
+    int i = l - 1;
+
+    for (int j = l; j <= h - 1; j++) 
+    {
+        if (stack->cost[j] <= pivot) 
+        {
+            i++;
+            swap_quick(stack, i, j);
+        }
+    }
+
+    swap_quick(stack, i + 1, h);
+    return i + 1;
+}
+
+/** Function name: quick_sort
+Input Params: stack, l , h
+Return type: void
+Description: gives a sorted (decreasing order) stack to the user **/
+void quick_sort(PAYMENT* stack, int l, int h) 
+{
+    if (l < h) 
+    {
+        int pi = partition(stack, l, h);
+        quick_sort(stack, l, pi - 1);
+        quick_sort(stack, pi + 1, h);
+    }
+}
+
+/** Function name: display_sorted_stack
+Input Params: stack
+Return type: void
+Description: function to display the stack **/
+void display_sorted_stack(PAYMENT stack) 
+{
+    std::cout << std::setw(20) << "Vehicle" << std::setw(10) << "Cost" << std::setw(20) << "Mode of Payment\n";
+    std::cout << "-----------------------------------------------------\n";
+
+    for (int i = stack.top; i >= 0; i--) 
+    {
+        std::cout << std::setw(20) << stack.tov[i] << std::setw(10) << stack.cost[i] << std::setw(20) << stack.mode_of_payment[i] << "\n";
+    }
+}
+
+/** Function name: calculate_distance
+Input Params: no of elements in final_list, vehicle name
+Return type: int
+Description: returns distance associated with the vehicle chosen by the user **/
+int calculate_distance(int c, const char* searchType) 
+{
+    int found = 0;
+    int count = 0;
+    int k = -1;
+    for (int i = 0; i < c; i++) 
+    {
+        if (strstr(final_list[i].type, searchType) != NULL) 
+        {
+            found = 1;
+            count++;
+            k = i;
+        }
+    }
+    if (count == 1) 
+    {
+        return final_list[k].distance;
+    } else if (count > 1) 
+    {
+        return final_list[count - 1].distance;
+    }
+    return -1; // Return -1 if not found
+}
+
+/** Function name: DFS
+Input Params: vertex, graph
+Return type: void
+Description: displays the path the user must visit **/
+void DFS(int vertex, int graph[10][10]) 
+{
+    visited[vertex] = 1;
+    std::cout << vertex << " ";
+
+    for (int i = 0; i < 10; i++) 
+    {
+        if (graph[vertex][i] && !visited[i]) 
+        {
+            DFS(i, graph);
+        }
+    }
+}
+
+// Dijkstra's implementation
+/** Function to return the min_index **/
+int min_distance(int dist[], int arr[]) 
+{
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < V; v++)
+        if (arr[v] == 0 && dist[v] <= min)
+            min = dist[v], min_index = v;
+
+    return min_index;
+}
+
+/** Prints the path the user has to take **/
+void print_path(int parent[], int j) 
+{
+    if (parent[j] == -1)
+        return;
+
+    print_path(parent, parent[j]);
+    std::cout << j << " ";
+}
+
+void print(int dist[], int parent[]) 
+{
+    std::cout << "Vertex   Distance from Source   Path\n";
+    for (int i = 0; i < V; i++) 
+    {
+        std::cout << std::setw(8) << i << std::setw(23) << dist[i];
+        print_path(parent, i);
+        std::cout << "\n";
+    }
+}
+
+/** Function name: dijkstra
+Input Params: source vertex, graph
+Return type: void
+Description: displays the path the user must visit **/
+void dijkstra(int graph[V][V], int source) 
+{
+    int dist[V], parent[V];
+    int arr[V];
+    int count;
+
+    for (int i = 0; i < V; i++) 
+    {
+        dist[i] = INT_MAX;
+        arr[i] = 0;
+        parent[i] = -1;
+    }
+
+    dist[source] = 0;
+
+    for (count = 0; count < V - 1; count++) 
+    {
+        int u = min_distance(dist, arr);
+        arr[u] = 1;
+
+        for (int v = 0; v < V; v++)
+            if (!arr[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v]) 
+            {
+                dist[v] = dist[u] + graph[u][v];
+                parent[v] = u;
+            }
+    }
+
+    print(dist, parent);
+}
+
+/** Function name: bfs
+Input Params: source vertex, graph
+Return type: void
+Description: displays the path the user must visit **/
+void bfs(int graph[10][10], int source) 
+{
+    int queue[100];
+    int front = 0, rear = 0, u, i;
+    int visited[10] = {0};
+
+    queue[rear] = source;
+    visited[source] = 1;
+
+    std::cout << "The BFS Traversal is \n";
+    while (front <= rear) 
+    {
+        u = queue[front++];
+        std::cout << u << " ";
+
+        for (i = 0; i < V; i++) 
+        {
+            if (graph[u][i] == 1 && visited[i] == 0) 
+            {
+                visited[i] = 1;
+                queue[++rear] = i;
+            }
+        }
+    }
+}
+
+// Prim's implementation
+/** Function to find min_index **/
+int min_key(int key[], int mst_set[]) 
+{
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < V; v++)
+        if (mst_set[v] == 0 && key[v] < min)
+            min = key[v], min_index = v;
+
+    return min_index;
+}
+
+/** Function to print mst **/
+void print_mst(int parent[], int graph[V][V]) 
+{
+    int sum = 0;
+    std::cout << "Edge \tWeight\n";
+    for (int i = 1; i < V; i++) 
+    {
+        sum += graph[i][parent[i]];
+    }
+    std::cout << "\nYOU HAVE TO TRAVEL A DISTANCE OF " << sum << " kms IN ORDER TO VISIT ALL THE PLACES AT A MINIMUM DISTANCE\n";
+}
+
+/** Function name: prim_mst
+Input Params: graph
+Return type: void
+Description: displays the path the user must visit **/
+void prim_mst(int graph[V][V]) 
+{
+    int parent[V], key[V], mst_set[V];
+    for (int i = 0; i < V; i++) 
+    {
+        key[i] = INT_MAX;
+        mst_set[i] = 0;
+    }
+
+    key[0] = 0;
+    parent[0] = -1;
+
+    for (int count = 0; count < V - 1; count++) 
+    {
+        int u = min_key(key, mst_set);
+        mst_set[u] = 1;
+
+        for (int v = 0; v < V; v++)
+            if (graph[u][v] && mst_set[v] == 0 && graph[u][v] < key[v]) 
+            {
+                parent[v] = u;
+                key[v] = graph[u][v];
+            }
+    }
+
+    print_mst(parent, graph);
+}
+
+// Kruskal's implementation
+/** Function to create_set **/
+void create_set(int a[], int n) 
+{
+    for (int i = 0; i < n; i++) 
+    {
+        a[i] = i;
+    }
+}
+
+/** Find function **/
+int find(int a[], int u) 
+{
+    return a[u];
+}
+
+/** Union function **/
+void union_sets(int a[], int n, int u, int v) 
+{
+    int temp = a[u];
+    for (int i = 0; i < n; i++) 
+    {
+        if (a[i] == temp) 
+        {
+            a[i] = a[v];
+        }
+    }
+}
+
+/** Function name: merge and merge sort
+Input Params: edges, left, mid, right
+Return type: void
+Description: sorts the edges for Kruskal's **/
+void merge(struct edge edges[], int left, int mid, int right) 
+{
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    struct edge L[n1], R[n2];
+
+    for (int i = 0; i < n1; i++) 
+    {
+        L[i] = edges[left + i];
+    }
+    for (int j = 0; j < n2; j++) 
+    {
+        R[j] = edges[mid + 1 + j];
+    }
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) 
+    {
+        if (L[i].weight <= R[j].weight) 
+        {
+            edges[k++] = L[i++];
+        } else 
+        {
+            edges[k++] = R[j++];
+        }
+    }
+
+    while (i < n1) 
+    {
+        edges[k++] = L[i++];
+    }
+
+    while (j < n2) 
+    {
+        edges[k++] = R[j++];
+    }
+}
+
+void merge_sort(struct edge edges[], int left, int right) 
+{
+    if (left < right) 
+    {
+        int mid = left + (right - left) / 2;
+        merge_sort(edges, left, mid);
+        merge_sort(edges, mid + 1, right);
+        merge(edges, left, mid, right);
+    }
+}
+
+void sort_edges(struct edge edges[], int edge_count) 
+{
+    merge_sort(edges, 0, edge_count - 1);
+}
+
+/** Function name: kruskals
+Input Params: graph
+Return type: void
+Description: displays the shortest non-connected path the user must visit **/
+void kruskals(int graph[V][V]) 
+{
+    struct edge edges[V * V];
+    int edge_count = 0;
+
+    for (int i = 0; i < V; i++) 
+    {
+        for (int j = i + 1; j < V; j++) 
+        {
+            if (graph[i][j] != 0) 
+            {
+                edges[edge_count].src = i;
+                edges[edge_count].dest = j;
+                edges[edge_count].weight = graph[i][j];
+                edge_count++;
+            }
+        }
+    }
+
+    sort_edges(edges, edge_count);
+    int sets[V];
+    create_set(sets, V);
+    int sum = 0;
+
+    for (int i = 0; i < edge_count; i++) 
+    {
+        int u = edges[i].src;
+        int v = edges[i].dest;
+
+        int setU = find(sets, u);
+        int setV = find(sets, v);
+
+        if (setU != setV) 
+        {
+            sum += edges[i].weight;
+            union_sets(sets, V, setU, setV);
+        }
+    }
+    std::cout << "THE PERSON HAS TO TRAVEL A DISTANCE OF " << sum << " kms IN ORDER TO TRAVEL ALL THE PLACES BUT IN A DISCONNECTED WAY.\n";
+}
+
+/** Function name: look_up_table
+Input Params: matrix, look up matrix
+Return type: void
+Description: searches for time taken to travel between any two vertices (places) **/
+void look_up_table(int matrix[10][10], int look_up[10][10]) 
+{
+    for (int i = 0; i < 10; i++) 
+    {
+        for (int j = 0; j < 10; j++) 
+        {
+            look_up[i][j] = matrix[i][j] * 2;
+        }
+    }
+}
+
+// Data look up
+int data_look_up(int look_up[10][10], int i, int j) 
+{
+    return look_up[i][j];
+}
+
+/** Function name: rabin_karp
+Input Params: text, pattern
+Return type: void
+Description: matches the input string (YES) to enter into the loop to proceed further **/
+int rabin_karp(char text[10], char opt[10]) 
+{
+    int M = strlen(opt);
+    int N = strlen(text);
+    int Q = 101; // prime number
+
+    int p = 0;  // hash value of the pattern
+    int t = 0;  // hash value of current substring of text
+    int h = 1;
+
+    for (int i = 0; i < M - 1; i++)
+        h = (h * d) % Q;
+
+    for (int i = 0; i < M; i++) 
+    {
+        p = (d * p + opt[i]) % Q;
+        t = (d * t + text[i]) % Q;
+    }
+
+    for (int i = 0; i <= N - M; i++) 
+    {
+        if (p == t) 
+        {
+            int j;
+            for (j = 0; j < M; j++) 
+            {
+                if (text[i + j] != opt[j])
+                    break;
+            }
+            if (j == M)
+                std::cout << "Pattern matched. You can search for the vehicle now\n";
+        }
+
+        if (i < N - M) 
+        {
+            t = (d * (t - text[i] * h) + text[i + M]) % Q;
+            if (t < 0)
+                t = (t + Q);
+        }
+    }
+    return 0;
+}
+
+// Fenwick tree implementation
+void update(int i, int delta) 
+{
+    i++;
+    while (i <= 2) 
+    {
+        fenwick_tree[i] += delta;
+        i += i & -i;
+    }
+}
+
+int query(int i) 
+{
+    int sum = 0;
+    i++;
+    while (i > 0) 
+    {
+        sum += fenwick_tree[i];
+        i -= i & -i;
+    }
+    return sum;
+}
+
+/** Function to initialize queue **/
+void initialize_queue(struct myqueue* q) 
+{
+    q->front = -1;
+    q->rear = -1;
+}
+
+/** Function name: enqueue
+Input Params: queue, name, rating, message
+Return type: void
+Description: enqueues the feedback details provided by the user as feedback **/
+void enqueue(struct myqueue* q, const char* name, float rating, const char* message) 
+{
+    q->rear++;
+    strcpy(q->name[q->rear], name);
+    q->rating[q->rear] = rating;
+    strcpy(q->message[q->rear], message);
+}
+
+/** Displays the queue **/
+void display_queue(struct myqueue* q) 
+{
+    for (int i = q->front; i <= q->rear; i++) 
+    {
+        std::cout << q->name[i] << "\t" << q->rating[i] << "\t" << q->message[i] << "\n";
+    }
+}
+
+/** Function to print table header **/
+void print_table_header() 
+{
+    std::cout << std::setw(10) << "Username" << std::setw(10) << "Ratings" << std::setw(10) << "Feedback" << std::setw(15) << "Timestamp\n";
+    std::cout << "--------------------------------------------------\n";
+}
+
+/** Prints the feedback **/
+void print_feedback_row(struct Feedback* feedback) 
+{
+    std::cout << std::setw(10) << feedback->username << std::setw(10) << feedback->ratings << std::setw(10) << feedback->feedback << std::setw(15) << feedback->timestamp << "\n";
+}
+
+/** Function name: create_resort
+Input Params: name, location, rating
+Return type: struct Resort*
+Description: creates the tree **/
+struct Resort* create_resort(const char* name, const char* location, float rating) 
+{
+    auto newnode = std::make_shared<Resort>();
+    if (!newnode) 
+    {
+        std::cout << "Memory allocation error\n";
+    }
+
+    strcpy(newnode->name, name);
+    strcpy(newnode->location, location);
+    newnode->rating = rating;
+    newnode->left = nullptr;
+    newnode->right = nullptr;
+
+    return newnode.get();
+}
+
+/** Function name: insert_resort
+Input Params: root, name, location, rating
+Return type: struct Resort* **/
+struct Resort* insert_resort(struct Resort* root, const char* name, const char* location, float rating) 
+{
+    if (root == nullptr) 
+    {
+        return create_resort(name, location, rating);
+    }
+
+    if (rating < root->rating) 
+    {
+        root->left = std::make_shared<Resort>(*insert_resort(root->left.get(), name, location, rating));
+    } 
+    else 
+    {
+        root->right = std::make_shared<Resort>(*insert_resort(root->right.get(), name, location, rating));
+    }
+
+    return root;
+}
+
+/** Function name: inorder_traversal
+Input Params: root
+Return type: void
+Description: displays the resort, location and rating given to it **/
+void inorder_traversal(struct Resort* root) 
+{
+    if (root != nullptr) 
+    {
+        inorder_traversal(root->left.get());
+        std::cout << "Name: " << root->name << ", Location: " << root->location << ", Rating: " << root->rating << "\n";
+        inorder_traversal(root->right.get());
+    }
+}
+
+/** Function name: search_resort_by_rating
+Input Params: root, rating
+Return type: struct Resort* **/
+struct Resort* search_resort_by_rating(struct Resort* root, float rating) 
+{
+    if (root == nullptr || rating == root->rating)
+    {
+        return root;
+    }
+
+    if (rating < root->rating) 
+    {
+        return search_resort_by_rating(root->left.get(), rating);
+    } else 
+    {
+        return search_resort_by_rating(root->right.get(), rating);
+    }
+}
+
+/** Function name: compute_LPS_array
+Input Params: pattern
+Return type: void
+Description: generates the longest suffix and prefix needed for KMP algo **/
+void compute_LPS_array(const char* pattern, int M, int* lps) 
+{
+    int len = 0;
+    int i = 1;
+    lps[0] = 0;
+
+    while (i < M) 
+    {
+        if (pattern[i] == pattern[len]) 
+        {
+            len++;
+            lps[i] = len;
+            i++;
+        } else 
+        {
+            if (len != 0) 
+            {
+                len = lps[len - 1];
+            } 
+            else 
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+}
+
+/** Function name: KMP_search
+Input Params: pattern and text (security pin: text) (input string: pattern)
+Return type: int
+Description: return the sum of indices (if the text and pattern match) **/
+int KMP_search(const char* pattern, const char* text) 
+{
+    int M = strlen(pattern);
+    int N = strlen(text);
+
+    if (M == 0 || N == 0) 
+    {
+        return -1;
+    }
+
+    int* lps = (int*)malloc(sizeof(int) * M);
+    int j = 0;
+
+    compute_LPS_array(pattern, M, lps);
+
+    int i = 0;
+    while (i < N) 
+    {
+        if (pattern[j] == text[i]) 
+        {
+            j++;
+            i++;
+        }
+
+        if (j == M) 
+        {
+            free(lps);
+            return i - j;
+        } else if (i < N && pattern[j] != text[i]) 
+        {
+            if (j != 0) 
+            {
+                j = lps[j - 1];
+            } else 
+            {
+                i++;
+            }
+        }
+    }
+
+    free(lps);
+    return -1;
+}
+
+int main() 
+{
+    /** All declarations **/
+    int matrix[10][10];
+    int time_matrix[10][10];
+    NODE* head = nullptr;
+    NODE* t = nullptr;
+    int choice;
+    int s;
+    int e;
+    int k;
+    int c;
+    int n;
+    int i;
+    int j;
+    char tov[15];
+    char opt[15];
+    PAYMENT stack;
+    stack.top = -1;
+    float* a;
+    int p;
+    int source;
+    int found;
+
+    /** Security to the program (KMP implementation) **/
+    char security[15] = "pooja@222";
+    char pin[15];
+    std::cout << "Enter the security key to use the app\n";
+    std::cout << "Hint: name@rollno\n";
+    std::cin >> pin;
+    found = KMP_search(pin, security);
+    if (found != -1) 
+    {
+        std::cout << "Security key matched. Access granted!\n";
+
+        /** Structure implementation **/
+        struct Feedback list[7] = 
+        {
+            {"Shradha", 4.5, "Best", "2days ago"},
+            {"Soujanya", 3.0, "Good", "1 day ago"},
+            {"Riya", 5.0, "Best", "23 hrs ago"},
+            {"Savita", 2.0, "Not good", "15 hrs ago"},
+            {"Sanjana", 4.0, "Average", "20 days ago"},
+            {"Pooja", 3.5, "Average", "12 min ago"},
+            {"Vasudev", 5.0, "Best", "30 min ago"}
+        };
+        std::cout << "\nGiven below are some of the feedback we received recently\n";
+        print_table_header();
+        for (i = 0; i < 7; i++) 
+        {
+            print_feedback_row(&list[i]);
+        }
+
+        /** This graph is taken as input for a person who wishes to wanderlust (graph algorithms) **/
+        int graph[10][10] = 
+        {
+            {0, 68, 35, 1, 70, 25, 79, 59, 63, 65},
+            {6, 0, 82, 28, 62, 92, 96, 43, 28, 37},
+            {92, 5, 0, 54, 93, 83, 22, 17, 19, 96},
+            {48, 27, 72, 0, 70, 13, 68, 100, 36, 95},
+            {4, 12, 23, 34, 0, 65, 42, 12, 54, 69},
+            {48, 45, 63, 58, 38, 0, 24, 42, 30, 79},
+            {17, 36, 91, 43, 89, 7, 0, 43, 65, 49},
+            {47, 6, 91, 30, 71, 51, 7, 0, 94, 49},
+            {30, 24, 85, 55, 57, 41, 67, 77, 0, 9},
+            {45, 40, 27, 24, 38, 39, 19, 83, 30, 0}
+        };
+
+        /** Map for an area (represented in the form of a graph generated randomly) **/
+        for (i = 0; i < 10; i++)
+        {
+            for (j = 0; j < 10; j++) 
+            {
+                if (i == j)
+                    matrix[i][j] = 0;
+                matrix[i][j] = rand() % 100 + 1;
+            }
+        }
+
+        std::cout << "\nGiven below is map for an area which the user is presently in\n";
+        std::cout << "*****************************\n";
+        for (i = 0; i < 10; ++i) 
+        {
+            for (j = 0; j < 10; ++j) 
+            {
+                if (i == j)
+                    std::cout << "0 ";
+                std::cout << matrix[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+        std::cout << "*****************************\n";
+        std::cout << "\n";
+
+        /** Floyd-Warshall implementation **/
+        floyd_warshall(matrix);
+
+        /** User input **/
+        /** Matrix that tells the time taken to travel between any two places **/
+        std::cout << "Do you wish the time travel matrix between the places you want to visit? Press 1 for yes.. any other number for no\n";
+        std::cin >> p;
+
+        if (p == 1) 
+        {
+            srand(time(NULL));
+            for (i = 0; i < 10; i++) 
+            {
+                for (j = 0; j < 10; j++) 
+                {
+                    if (i == j) 
+                    {
+                        time_matrix[i][j] = 0;
+                    } else 
+                    {
+                        time_matrix[i][j] = rand() % 100 + 1;
+                    }
+                }
+            }
+            std::cout << "The time matrix for the given area is\n";
+            std::cout << "*****************************\n";
+            for (i = 0; i < 10; i++) 
+            {
+                for (j = 0; j < 10; j++) 
+                {
+                    if (i == j)
+                        std::cout << "0 ";
+                    std::cout << time_matrix[i][j] << " ";
+                }
+                std::cout << "\n";
+            }
+            std::cout << "*****************************\n";
+        } else {
+            std::cout << "No, I don't need a time matrix\n";
+        }
+
+        p = 0;
+
+        std::cout << "\nDo you prefer to travel (tourist) or in need of immediate emergency\n";
+        std::cout << "PRESS 0 FOR WANDERLUST (travel without cost) OR 1 FOR IMMEDIATE EMERGENCY\n";
+        std::cin >> p;
+        if (p == 0) 
+        {
+            std::cout << "Please prefer the following options available\n";
+            while (true) 
+            {
+                std::cout << "\n******** Menu *************\n";
+                std::cout << "0 - IF THE USER WANTS TO SEARCH TIME BETWEEN ANY TWO PLACES\n"; /** LOOK UP TABLE **/
+                std::cout << "1 - IF THE USER WANTS TO JUST WANDERLUST THE PLACES NOT PARTICULARLY IN NEED OF SHORTEST PATH (wants to find immediate cities)\n"; /** DFS **/
+                std::cout << "2 - IF THE USER WANTS TO FIND THE SHORTEST PATH FROM A PARTICULAR POINT TO ANY PARTICULAR PLACE WITHOUT ANY DISCONNECTIVITY\n"; /** DIJKTRA'S **/
+                std::cout << "3 - IF THE USER WANTS TO VISIT LEVEL BY LEVEL\n"; /** BFS **/
+                std::cout << "4 - IF THE USER WANTS TO VISIT IN A CONNECTED WAY WITH SHORTEST PATH BEEN COVERED AND ALL THE PLACES VISITED\n"; /** PRIMS **/
+                std::cout << "5 - IF THE USER DOES NOT WISH TO TRAVEL IN A CONNECTED WAY BUT WITH SHORTEST PATH BEEN COVERED AND ALL THE PLACES VISITED\n"; /** KRUSKALS **/
+                std::cout << "6 - IF THE USER WISHES TO SEE NEARBY RESORTS FOR A STAY\n"; /** BINARY SEARCH TREE **/
+                std::cout << "*****************************\n";
+                std::cout << "Enter your choice\n";
+                std::cin >> choice;
+
+                switch (choice) 
+                    case 0: 
+                    {
+                        /** Lookup table implementation **/
+                        int table[10][10];
+                        look_up_table(time_matrix, table);
+                        std::cout << "Enter any two start and end values (any 2 (different) vertices) about which you want to see the time taken\n";
+                        std::cin >> s >> e;
+                        std::cout << "Time taken to travel from [" << s << "] to [" << e << "] is : " << data_look_up(table, s, e) << " minutes\n";
+                        break;
+                    }
+                    case 1: 
+                    {
+                        /** DFS implementation **/
+                        std::cout << "\nEnter the place (vertex) from which you wish to start: ";
+                        std::cin >> source;
+
+                        std::fill(std ::begin(visited), std::end(visited), 0);
+
+                        std::cout << "\nTHE PATH THAT THE USER HAS TO OPT IN ORDER TO REACH THE END DESTINATION " << source << ": ";
+                        DFS(source, graph);
+                        break;
+                    }
+                    case 2: 
+                    {
+                        /** Dijkstra's implementation **/
+                        std::cout << "Enter the source vertex from which you wish to start the journey\n";
+                        std::cin >> source;
+                        std::cout << "YOU CAN CHOOSE ANY OF THE PATHS GIVEN BESIDES (as path)\n";
+                        dijkstra(graph, source);
+                        break;
+                    }
+                    case 3: 
+                    {
+                        /** BFS implementation **/
+                        int bfs_graph[10][10] = {
+                            {0, 1, 0, 0, 1, 0, 1, 1, 1, 1},
+                            {0, 0, 1, 0, 1, 1, 1, 0, 0, 0},
+                            {1, 0, 0, 1, 1, 1, 0, 0, 0, 1},
+                            {0, 0, 1, 0, 1, 0, 1, 1, 0, 1},
+                            {0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
+                            {0, 0, 1, 1, 0, 0, 0, 0, 0, 1},
+                            {0, 0, 1, 0, 1, 0, 0, 0, 1, 0},
+                            {0, 0, 1, 0, 1, 1, 0, 0, 1, 0},
+                            {0, 0, 1, 1, 1, 0, 1, 1, 0, 0},
+                            {0, 0, 0, 0, 0, 0, 0, 1, 0, 0}
+                        };
+
+                        std::cout << "Enter the starting place (vertex) from which you wish to start your journey\n";
+                        std::cin >> source;
+                        std::cout << "\nTHE PATH THAT THE USER HAS TO OPT IN ORDER TO REACH THE END DESTINATION " << source << ": ";
+                        bfs(bfs_graph, source);
+                        break;
+                    }
+                    case 4: 
+                    {
+                        /** Prim's implementation **/
+                        prim_mst(graph);
+                        break;
+                    }
+                    case 5: 
+                    {
+                        /** Kruskal's implementation **/
+                        kruskals(graph);
+                        break;
+                    }
+                    case 6: 
+                    {
+                        /** Binary tree implementation for searching of resort **/
+                        struct Resort* root = nullptr;
+                        root = insert_resort(root, "EMERALD", "KARWAR", 4.5);
+                        root = insert_resort(root, "LOTUS", "SADASHIVGAD", 3.8);
+                        root = insert_resort(root, "KAMATLUXURIES", "KANASGIRI", 4.1);
+                        root = insert_resort(root, "RESERVELAND", "KAJUBAG", 4.2);
+                        root = insert_resort(root, "S_HOSPITALITY", "KODIBAG", 2);
+                        std::cout << "Nearby Resorts:\n";
+                        inorder_traversal(root);
+
+                        float target_rating;
+                        std::cout << "\nEnter the rating of the resort you want to search:\n";
+                        std::cin >> target_rating;
+
+                        struct Resort* found_resort = search_resort_by_rating(root, target_rating);
+
+                        if (found_resort != nullptr) 
+                        {
+                            std::cout << "Congratulations ! We found a resort with the specified rating:\n";
+                            std::cout << "Name: " << found_resort->name << ", Location: " << found_resort->location << ", Rating: " << found_resort->rating << "\n";
+                        } else 
+                        {
+                            std::cout << "Sorry, no matching results found for the specified rating.\n";
+                        }
+                        break;
+                    }
+                    default:
+                        std::cout << "Invalid choice. Please try again.\n";
+                }
+            }
+        } else if (p == 1) 
+        {
+            std::cout << "Please prefer the following options available\n";
+            while (true) 
+            {
+                std::cout << "\n******** Menu *************\n";
+                std::cout << "6 - IF THE USER WANTS TO SEARCH TIME BETWEEN ANY TWO PLACES\n";
+                std::cout << "7 - FILE WRITING\n";
+                std::cout << "8 - FILE LOADING\n";
+                std::cout << "9 - VEHICLES, COST AND MODE OF PAYMENT\n";
+                std::cout << "10 - USER INPUT TO GO TO DESIRED LOCATION\n";
+                std::cout << "11 - PAYMENT AFTER TRAVELLING\n";
+                std::cout << "12 - FEEDBACK SHARING\n";
+                std::cout << "*****************************\n";
+
+                std::cout << "\nCAUTION**: Please do not select case 7 & 8 because they are already being implemented.. if you choose it may lead to any discrepancies in the code\n";
+                std::cout << "\nCase 11 must be chosen only after case 10 is implemented and case 12 chosen at last\n";
+                std::cout << "Enter your choice\n";
+                std::cin >> choice;
+                switch (choice) 
+                {
+                    case 6: 
+                    {
+                        /** Look up table implementation **/
+                        int table[10][10];
+                        look_up_table(time_matrix, table);
+                        std::cout << "Enter any two start and end values about which you want to see the time taken\n";
+                        std::cin >> s >> e;
+                        std::cout << "Time taken to travel from [" << s << "] to [" << e << "] is : " << data_look_up(table, s, e) << " minutes\n";
+                        break;
+                    }
+                    case 7:
+                        write_into_file();
+                        break;
+                    case 8:
+                        read_from_file();
+                        break;
+                    case 9: 
+                    {
+                        /** Stack implementation **/
+                        int n = 8;
+                        char vehicle[20];
+                        float cost;
+                        char mop[20];
+
+                        push(&stack, "RAPIDO", 10.0, "CASH/PPAY/PAY");
+                        push(&stack, "OLA", 25.0, "GPAY");
+                        push(&stack, "METRO", 7.0, "PPAY/GPAY/CASH");
+                        push(&stack, "PUBLICBUS", 6.0, "CASH");
+                        push(&stack, "PRIVATEVEHICLE", 0.0, "0");
+                        push(&stack, "TRAIN", 5.0, "CASH/ONLINE");
+                        push(&stack, "UBERAUTO", 16.0, "CASH/GPAY/PPAY");
+                        push(&stack, "RICKSHAW", 20.0, "CASH/PPAY/GPAY");
+
+                        std::cout << "\n\n";
+                        float* cost_array = display_stack(stack);
+                        heap_sort(n, cost_array);
+                        std::cout << "\nThe following just gives the sorted list of cost that the vehicles take for each km\n";
+                        display_array(cost_array);
+                        std::cout << "\n";
+                        quick_sort(&stack, 0, stack.top);
+                        std::cout << "The following displays the sorted (decreasing order) for the elements of the stack\n";
+                        display_sorted_stack(stack);
+                        break;
+                    }
+                    case 10: 
+                    {
+                        j = 0;
+                        s = 0;
+                        e = 0;
+                        std::cout << "Enter the start (space) end point of the journey (0-9)\n";
+                        std::cout << "CAUTION** START AND END POINT SHOULD NOT BE THE SAME\n";
+                        std::cin >> s >> e;
+                        search_from_file(s);
+                        k = get_distance_associated(s, e);
+                        c = all_distances(s, e, k);
+                        if (c == 1) 
+                        {
+                            std::cout << "There is only one option available to you\n";
+                        } else 
+                        {
+                            std::cout << "Enter the details of vehicle and pollution caused by them\n";
+                            std::cout << "Sample is provided in the code for reference (line 1822-1833)\n";
+
+                            for (i = 0; i < 8; i++) 
+                            {
+                                /** Sample input **/
+                                t = create_node(); // RAPIDO 15
+                                // OLA 30
+                                // METRO 20
+                                // PUBLICBUS 63.4
+                                // PRIVATEVEHICLE 87.5
+                                // TRAIN 76.54
+                                // UBERAUTO 21
+                                // RICKSHAW 41.7
+                                t = read_details(t);
+                                head = insert_end(head, t);
+                            }
+                            std::cout << "\n";
+                            display_list(head);
+                            std::cout << "Enter either 0 or 1 or 2 for sorting on basis of fare, distance, and seats respectively\n";
+                            std::cout << "**CAUTION - SORTING ON BASIS OF SEATS IS GENERALLY NOT PREFERRED**\n";
+                            std::cout << "\nPlease prefer to go with distance based sorting as that would give you the expected result with accuracy!\n";
+                            std::cin >> j;
+                            if (j == 0) 
+                            {
+                                selection_sort_fare(c);
+                                std::cout << "\nThe sorted list (according to fare)\n";
+                                display_sorted_list();
+                            }
+                            if (j == 1) 
+                            {
+                                std::cout << "\nThe sorted list (according to distance)";
+                                bubble_sort_distance(c);
+                                display_sorted_list();
+                            }
+                            if (j == 2) 
+                            {
+                                std::cout << "\nThe sorted list (according to seats)";
+                                insertion_sort_seats(c);
+                                display_sorted_list();
+                            }
+                            char text[] = "YES";
+                            char pattern[20];
+
+                            std::cout << "Do you want to search for any vehicle's pollution in particular? If yes, type YES. Else, you can't.\n";
+                            std::cin >> pattern;
+                            int r = rabin_karp(text, pattern);
+                            for (i = 0; i < 2; i++) 
+                            {
+                                if (r == 1) 
+                                {
+                                    /** Searching for a particular vehicle and pollution caused by it **/
+                                    std::cout << "Please enter the preferable type of transport (ENTER IN CAPS)";
+                                    std::cout << " The transport must be chosen from any one of the vehicles listed above in the sorted list\n";
+                                    std::cin >> tov;
+                                    search_vehicle_pollution(head, tov);
+                                    break;
+                                } else 
+                                {
+                                    std::cout << "Re-enter YES. This is your last chance else you will be redirected to the front page!\n";
+                                    std::cin >> pattern;
+                                    r = rabin_karp(text, pattern);
+                                }
+                            }
+
+                            std::cout << "Which vehicle do you wish to opt for (ENTER IN CAPS)\n";
+                            std::cin >> opt;
+                            search_vehicle(c, opt);
+                        }
+                        break;
+                    }
+                    case 11: 
+                    {
+                        int n = 8;
+                        char vehicle[20];
+                        float cost;
+                        char mop[20];
+
+                        std::cout << "Here are the details of vehicle type, cost/km and mode of payment the transport provides\n";
+                        push(&stack, "RAPIDO", 10.0, "CASH/PPAY/PAY");
+                        push(&stack, "OLA", 25.0, "GPAY");
+                        push(&stack, "METRO", 7.0, "PPAY/GPAY/CASH");
+                        push(&stack, "PUBLICBUS", 6.0, "CASH");
+                        push(&stack, "PRIVATEVEHICLE", 0.0, "0");
+                        push(&stack, "TRAIN", 5.0, "CASH/ONLINE");
+                        push(&stack, "UBERAUTO", 16.0, "CASH/GPAY/PPAY");
+                        push(&stack, "RICKSHAW", 20.0, "CASH/PPAY/GPAY");
+
+                        std::cout << "\n\n";
+                        float* cost_array = display_stack(stack);
+                        std::cout << "\n";
+                        quick_sort(&stack, 0, stack.top);
+                        std::cout << "The following displays the sorted (decreasing order) for the elements of the stack\n";
+                        display_sorted_stack(stack);
+                        std::cout << "Enter the vehicle that you had opted for previously in case 10 (ENTER IN CAPS)\n";
+                        std::cin >> opt;
+                        if (strcmp(opt, "PRIVATE VEHICLE") == 0) 
+                        {
+                            std::cout << "The user uses his/her own vehicle and travels to the required destination\n";
+                        } else 
+                        {
+                            int distance = calculate_distance(c, opt);
+                            float rupees = pop_cost_of_vehicle(&stack, opt);
+
+                            std::cout << "And the cost needed to travel on " << opt << " is " << rupees * distance << "\n";
+
+                            std::cout << "Do you want to pay the amount in installments or you wish to pay it now?\n";
+                            std::cout << "1 - YES 0 - NO\n";
+                            i = 0;
+                            std::cin >> i;
+                            if (i == 1) 
+                            {
+                                std::cout << "You have only two installments to pay\n";
+
+                                std::fill(std::begin(fenwick_tree), std::end(fenwick_tree), 0);
+
+                                int installment_amounts[30];
+                                std::cout << "Enter the installment amounts:\n";
+                                for (i = 0; i < 2; i++) 
+                                {
+                                    std::cin >> installment_amounts[i];
+                                    update(i, installment_amounts[i]);
+                                }
+
+                                int amount = query(2 + 1);
+                                std::cout << "Remaining amount to be paid after installment " << 2 + 1 << ": " << (distance * rupees) - amount << "\n";
+                            } else 
+                            {
+                                std::cout << "I'll pay the desired amount now itself.\n";
+                            }
+                            std::cout << "Congratulations!! " << (distance * rupees) << " amount is paid.. Have a safe journey!!\n";
+                        }
+                        break;
+                    }
+                    case 12: 
+                    {
+                        struct myqueue q;
+                        char name[20];
+                        float rating;
+                        char message[20];
+                        initialize_queue(&q);
+
+                        std::cout << "Enter feedback details for entry:\n";
+                        std::cout << "Name: ";
+                        std::cin >> name;
+
+                        std::cout << "Rating: ";
+                        std::cin >> rating;
+
+                        std::cout << "Message: ";
+                        std::cin >> message;
+
+                        enqueue(&q, name, rating, message);
+                        std::cout << "THANK YOU! " << name << ", have a safe journey!\n";
+                        break;
+                    }
+                    default:
+                        std::cout << "Invalid choice. Please try again.\n";
+                }
+            }
+        }
+    } else 
+    {
+        std::cout << "Invalid security key. Access denied!\n";
+    }
+
+    return 0;
+}
+            </code>
+        </div>
+    </div>
+</body>
+</html>
